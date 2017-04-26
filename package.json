@@ -1,0 +1,25 @@
+{
+  "name": "componentPlayground",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "react-scripts": "0.9.5"
+  },
+  "dependencies": {
+    "mqtt": "^2.6.2",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "mqtt": "mosca -v --http-port 8080 --http-bundle --http-static ./ | bunyan"
+  },
+  "babel": {
+    "plugins": [
+      "jsx-control-statements"
+    ]
+  }
+}

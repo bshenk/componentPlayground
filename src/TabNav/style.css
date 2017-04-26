@@ -1,0 +1,41 @@
+.tab-nav {
+  list-style: none;
+  width: 100%;
+  text-align: left;
+  padding: 0;
+  margin: 0;
+}
+
+.tab-content {
+  text-align: left;
+  padding: 15px;
+}
+
+.tab-nav li {
+  display: inline-block;
+  margin: 0 15px;
+}
+
+.tab-nav li:first-of-type {
+  margin-left: 10px;
+}
+
+.tab-nav li:hover {
+  cursor: pointer;
+}
+
+.tab-nav li {
+  border-bottom: 2px solid;
+  transition: all .2s ease-in-out;
+  transition-property: border-color, color;
+}
+
+.tab-nav li h4 {
+  margin: 15px 5px 15px 5px;
+}
+
+.line-break {
+  width: 100%;
+  height: 2px;
+  margin-top: -2px;
+}
