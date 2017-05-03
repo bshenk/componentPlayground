@@ -13,7 +13,8 @@ class App extends Component {
 
     this.state = {
       url: 'ws://localhost:8080',
-      connected: true
+      connected: true,
+      hosts: null
     }
   }
 
@@ -34,24 +35,25 @@ class App extends Component {
         <ReactMQTT
           url={this.state.url}
           connected={this.state.connected}
+          topics={['hostHeartbeat', 'hostAnnouncement', 'hostGoodbye']}
           onConnect={msg => this.handleConnect(msg)}
           onClose={msg => console.log(msg)}
-          onMessage={msg => console.log(msg)}
+          onMessage={(topic, msg, packet) => this.handleMessage(topic, msg, packet)}
           onError={err => console.error(err)}
         />
 
         <div className='tab' style={{width: '50%', margin: '0 auto'}}>
           <TabNav activeColor='#E65343'>
             <Tab title='Hosts'>
-              <Hosts />
+              <Hosts hosts={this.state.hosts} />
             </Tab>
 
             <Tab title='Other'>
-              Other
+              <p>Other</p>
             </Tab>
 
             <Tab title='Testing'>
-              Testing 1234
+              <p>Testing 1234</p>
             </Tab>
           </TabNav>
         </div>
@@ -68,6 +70,16 @@ class App extends Component {
 
   handleConnect (msg) {
     console.log(msg)
+  }
+
+  handleMessage (topic, msg, packet) {
+    const json = JSON.parse(msg)
+
+    if(topic === 'hostHeartbeat') this.handleHeartbeat(json)
+  }
+
+  handleHeartbeat (beat) {
+    this.setState({ hosts: [beat] })
   }
 }
 

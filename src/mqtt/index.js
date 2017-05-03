@@ -5,11 +5,12 @@ import mqtt from 'mqtt'
 // TODO: set up reconnecting
 
 class ReactMQTT extends Component {
-  constructor () {
-    super()
+  constructor (props) {
+    super(props)
 
     this.state = {
-      client: null
+      client: null,
+      subscribedTo: []
     }
   }
   componentWillMount () {
@@ -45,7 +46,7 @@ class ReactMQTT extends Component {
     return null
   }
 
-  setupClient (connectUrl) {
+  setupClient (connectUrl, callback = null) {
     // if client exists, end connection
     this.closeClient()
 
@@ -53,7 +54,9 @@ class ReactMQTT extends Component {
     let client = mqtt.connect(`${connectUrl}`)
 
     client.on('connect', () => {
-      this.props.onConnect(`Connected to MQTT server: ${connectUrl}.`)
+      this.props.onConnect(`[MQTT] Connected to server: ${connectUrl}.`)
+
+      this.setupSubscriptions(client)
     })
 
     client.on('message', (topic, message, packet) => {
@@ -64,14 +67,14 @@ class ReactMQTT extends Component {
       this.props.onError(error)
     })
 
+    this.setState({ client })
+
     client.on('close', () => {
-      this.props.onClose(`Disconnected from MQTT server: ${connectUrl}.`)
+      this.props.onClose(`[MQTT] Disconnected from server: ${connectUrl}.`)
 
       // if reconnect is false, the client will be closed
       this.closeClient()
     })
-
-    this.setState({ client })
   }
 
   closeClient (force = true) {
@@ -83,6 +86,25 @@ class ReactMQTT extends Component {
       })
     }
   }
+
+  setupSubscriptions (client) {
+    client.subscribe(this.props.topics, null, (err, topics) => {
+      if(err) return err
+
+      let subscribedTopics = []
+
+      topics.forEach(topic => {
+        subscribedTopics = [
+          ...subscribedTopics,
+          topic.topic
+        ]
+
+        console.log(`[MQTT] Subscribed to topic: ${topic.topic}`)
+      })
+
+      this.setState({ subscribedTo: subscribedTopics })
+    })
+  }
 }
 
 ReactMQTT.propTypes = {
@@ -91,7 +113,8 @@ ReactMQTT.propTypes = {
   onConnect: PropTypes.func.isRequired,
   onMessage: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
+  topics: PropTypes.array.isRequired
 }
 
 export default ReactMQTT

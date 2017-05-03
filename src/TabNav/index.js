@@ -4,6 +4,8 @@ import './style.css'
 
 import Tab from './Tab'
 
+import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup'
+
 class TabNav extends Component {
   constructor (props) {
     super(props)
@@ -52,10 +54,18 @@ class TabNav extends Component {
         <div className='line-break' style={{ backgroundColor: linebreakColor }} />
 
         <div className='tab-content' style={{color: hoverColor}}>
-          {children.map(child => {
-            const active = child.props.title === this.state.active
-            return active ? child.props.children : null
-          })}
+          <CSSTransitionGroup
+            transitionName='tab-content-child'
+            transitionEnterTimeout={500}
+            transitionLeaveTimeout={300}
+            transitionAppear={true}
+            transitionAppearTimeout={500}
+          >
+            {children.map(child => {
+              const active = child.props.title === this.state.active
+              return active ? child.props.children : null
+            })}
+          </CSSTransitionGroup>
         </div>
       </section>
     )
