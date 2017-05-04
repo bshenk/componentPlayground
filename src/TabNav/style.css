@@ -42,6 +42,15 @@
 }
 
 /* TRANSITION */
+.tab-content-child-appear {
+  opacity: 0.01;
+}
+
+.tab-content-child-appear.tab-content-child-appear-active {
+  opacity: 1;
+  transition: opacity .5s ease-in;
+}
+
 .tab-content-child-enter {
   opacity: 0.01;
   position: absolute;

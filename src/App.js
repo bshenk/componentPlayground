@@ -14,7 +14,7 @@ class App extends Component {
     this.state = {
       url: 'ws://localhost:8080',
       connected: true,
-      hosts: null
+      hosts: {}
     }
   }
 
@@ -45,7 +45,12 @@ class App extends Component {
         <div className='tab' style={{width: '50%', margin: '0 auto'}}>
           <TabNav activeColor='#E65343'>
             <Tab title='Hosts'>
-              <Hosts hosts={this.state.hosts} />
+              <Hosts
+                hosts={this.state.hosts}
+                showIcon
+                primaryColor='#E65343'
+                grid='1.5fr .5fr .5fr .5fr'
+              />
             </Tab>
 
             <Tab title='Other'>
@@ -75,11 +80,26 @@ class App extends Component {
   handleMessage (topic, msg, packet) {
     const json = JSON.parse(msg)
 
-    if(topic === 'hostHeartbeat') this.handleHeartbeat(json)
+    // console.log(topic, json)
+
+    if (topic === 'hostHeartbeat') this.handleHeartbeat(json)
+    if (topic === 'hostGoodbye') this.handleGoodbye(json)
   }
 
   handleHeartbeat (beat) {
-    this.setState({ hosts: [beat] })
+    let hosts = {...this.state.hosts}
+
+    hosts[beat.host] = beat
+
+    this.setState({ hosts })
+  }
+
+  handleGoodbye (beat) {
+    let hosts = {...this.state.hosts}
+
+    delete hosts[beat.host]
+
+    this.setState({ hosts })
   }
 }
 
